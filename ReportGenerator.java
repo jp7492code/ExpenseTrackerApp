@@ -1,20 +1,33 @@
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
+import java.sql.*;
+import java.io.*;
 
 public class ReportGenerator {
-    public static void generateCSV() {
-        List<Expense> expenses = DatabaseManager.getExpenses();
-        String fileName = "expense_report.csv";
+    private Connection conn;
 
-        try (FileWriter writer = new FileWriter(fileName)) {
-            writer.append("ID,Description,Amount,Category,Date\n");
-            for (Expense e : expenses) {
-                writer.append(String.format("%d,%s,%.2f,%s,%s\n", 
-                        e.getId(), e.getDescription(), e.getAmount(), e.getCategory(), e.getDate()));
+    public ReportGenerator() {
+        try {
+            conn = DriverManager.getConnection("jdbc:sqlite:expenses.db");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void generateCSVReport(String filename) {
+        String selectSQL = "SELECT * FROM expenses";
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(selectSQL);
+             BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            writer.write("ID, Name, Amount
+");
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                double amount = rs.getDouble("amount");
+                writer.write(id + ", " + name + ", " + amount + "
+");
             }
-            System.out.println("CSV Report Generated: " + fileName);
-        } catch (IOException e) {
+            System.out.println("Report generated at " + filename);
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
     }
