@@ -1,7 +1,7 @@
 # Expense Tracker
 
 ## Overview
-A simple Expense Tracker application built in Java with SQLite for managing personal expenses. You can add, view, and generate reports for your expenses.
+A Expense Tracker application built in Java with SQLite for managing personal expenses. You can add, view, and generate reports for your expenses.
 
 ## Features
 - Add Expense
